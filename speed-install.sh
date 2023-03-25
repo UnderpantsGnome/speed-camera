@@ -2,9 +2,12 @@
 # speed-install.sh script written by Claude Pageau 1-Jul-2016
 
 ver="11.08"
-SPEED_DIR='speed-camera'  # Default folder install location
+SPEED_DIR="${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"  # Default folder install location
 # Make sure ver below matches latest rclone ver on https://downloads.rclone.org/rclone-current-linux-arm.zip
 rclone_cur_ver="rclone v1.55.1"
+
+GIT_HUB_USER=${SPEED_CAMERA_GIT_HUB_USER:-pageauc}
+GIT_HUB_BRANCH=${SPEED_CAMERA_GIT_HUB_BRANCH:-master}
 
 cd ~
 is_upgrade=false
@@ -40,29 +43,29 @@ else
 fi
 
 for fname in "${speedFiles[@]}" ; do
-    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/speed-camera/master/$fname)
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/$fname)
     if [ $? -ne 0 ]; then
         if [ $? -ne 0 ]; then
             echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
         else
-            wget -O $fname https://raw.github.com/pageauc/speed-camera/master/$fname
+            wget -O $fname https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/$fname
         fi
     fi
 done
-wget -q --show-progress -nc https://raw.github.com/pageauc/speed-camera/master/user_motion_code.py
-wget -O media/webserver.txt -q --show-progress https://raw.github.com/pageauc/speed-camera/master/webserver.txt
-wget -O config.py.new -q --show-progress https://raw.github.com/pageauc/speed-camera/master/config.py
+wget -q --show-progress -nc https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/user_motion_code.py
+wget -O media/webserver.txt -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/webserver.txt
+wget -O config.py.new -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/config.py
 
 if [ ! -f remote-run.sh ] ; then
-    wget -O watch-app.sh -q --show-progress https://raw.github.com/pageauc/speed-camera/master/watch-app.sh
+    wget -O watch-app.sh -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/watch-app.sh
 fi
 
 if [ ! -f remote-run.sh ] ; then
-    wget -O remote-run.sh -q --show-progress https://raw.github.com/pageauc/speed-camera/master/remote-run.sh
+    wget -O remote-run.sh -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/remote-run.sh
 fi
 
 if [ ! -f rclone-security-sync-recent.sh ] ; then
-    wget -O rclone-security-sync-recent.sh -q --show-progress https://raw.github.com/pageauc/speed-camera/master/rclone-security-sync-recent.sh
+    wget -O rclone-security-sync-recent.sh -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/rclone-security-sync-recent.sh
 fi
 
 # Install plugins if not already installed.  You must delete a plugin file to force reinstall.
@@ -78,13 +81,13 @@ for fname in "${pluginFiles[@]}" ; do
   if [ -f $fname ]; then     # check if local file exists.
     echo "INFO  : $fname plugin Found.  Skip Download ..."
   else
-    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/speed-camera/master/plugins/$fname)
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/plugins/$fname)
     if [ $? -ne 0 ]; then
-        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/speed-camera/master/plugins/$fname)
+        wget_output=$(wget -O $fname -q https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/plugins/$fname)
         if [ $? -ne 0 ]; then
             echo "ERROR : $fname wget Download Failed. Possible Cause Internet Problem."
         else
-            wget -O $fname "https://raw.github.com/pageauc/speed-camera/master/plugins/$fname"
+            wget -O $fname "https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/plugins/$fname"
         fi
     fi
   fi
@@ -100,13 +103,13 @@ rcloneFiles=("rclone-security-copy.sh" "rclone-security-sync.sh" "rclone-securit
 mkdir -p $RCLONE_DIR
 cd $RCLONE_DIR
 for fname in "${rcloneFiles[@]}" ; do
-    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/speed-camera/master/rclone-samples/$fname)
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/rclone-samples/$fname)
     if [ $? -ne 0 ]; then
-        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/speed-camera/master/rclone-samples/$fname)
+        wget_output=$(wget -O $fname -q https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/rclone-samples/$fname)
         if [ $? -ne 0 ]; then
             echo "ERROR : $fname wget Download Failed. Possible Cause Internet Problem."
         else
-            wget -O $fname "https://raw.github.com/pageauc/speed-camera/master/rclone-samples/$fname"
+            wget -O $fname "https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/rclone-samples/$fname"
         fi
     fi
 done
@@ -189,7 +192,7 @@ $STATUS Complete
 4. To start speed-cam open SSH or a GUI desktop Terminal session
    and change to speed-camera folder and launch per commands below
 
-   cd ~/speed-camera
+   cd "${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
    ./speed-cam.py
 
 Calibrate speed camera per wiki instructions.  After Calibration is complete
@@ -201,19 +204,19 @@ Run from Admin menu per
 
 IMPORTANT: speed-cam.py ver 8.x Requires Updated config.py and plugins
 
-    cd ~/speed-camera
+    cd "${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
     cp config.py config.py.bak
     cp config.py.new config.py
 
 To replace plugins rename plugins folder per below
 
-    cd ~/speed-camera
+    cd "${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
     mv plugins pluginsold
 
 Then run menubox.sh UPGRADE menu pick.
 
 -----------------------------------------------
-For Detailed Instructions See https://github.com/pageauc/speed-camera/wiki
+For Detailed Instructions See https://github.com/${GIT_HUB_USER}/speed-camera/wiki
 $SPEED_DIR version $ver
 Good Luck Claude ...
 Bye"
