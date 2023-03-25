@@ -3,9 +3,9 @@
 # You will then be able close the terminal session.  To auto start
 # Add the following command to the /etc/rc.local
 # /home/pi/pi-timolo/webserver.sh start
-# To implement webserver3.py copy it to webserver.py.  Use Buster or later 
+# To implement webserver3.py copy it to webserver.py.  Use Buster or later
 
-progpath="/home/pi/speed-camera"
+progpath="${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
 progname="webserver.py"
 
 echo "$0 ver 6.02 written by Claude Pageau"

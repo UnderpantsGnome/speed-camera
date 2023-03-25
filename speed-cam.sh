@@ -4,7 +4,7 @@
 # Add the following command to the /etc/rc.local
 # /home/pi/speed-camera/speed-cam.sh start
 
-progpath="/home/pi/speed-camera"
+progpath="${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
 progname="speed-cam.py"
 
 echo "$0 ver 6.00 written by Claude Pageau"

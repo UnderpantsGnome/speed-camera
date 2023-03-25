@@ -14,7 +14,7 @@ echo "$progName $ver  written by Claude Pageau"
 
 lockFileCheck=false      # true= Checks for pi-timolo.sync file. false = No Check (case sensitive)
 rcloneName="gdmedia"     # Name of Remote Storage Service
-syncRoot="/home/pi/speed-camera"   # Root Folder to Start
+syncRoot="${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"   # Root Folder to Start
 localDir="media/security"         # Source Folder on Local
 remoteDir="scam/security"        # Destination Folder on Remote
 rcloneParam="sync"       # rclone option to perform  Eg  sync, copy, move
@@ -35,7 +35,7 @@ rcloneParam   : $rcloneParam   (Options are sync, copy or move)
 
 ---------------------------------"
 
-lockFilePath="/home/pi/pi-timolo/pi-timolo.sync"
+lockFilePath="${SPEED_CAMERA_DIR:-"/home/pi"}/pi-timolo/pi-timolo.sync"
 
 cd $syncRoot   # Change to local rclone root folder
 if pidof -o %PPID -x "$progName"; then

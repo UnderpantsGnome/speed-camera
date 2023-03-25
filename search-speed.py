@@ -42,6 +42,9 @@ baseDir=mypath[0:mypath.rfind("/")+1]  # get the path location only (excluding s
 baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
 progName = os.path.basename(__file__)  # Get name of this script with no path
 
+gitHubUser = os.getenv("GIT_HUB_USER", "pageauc")
+gitHubBranch = os.getenv("GIT_HUB_USER", "master")
+
 print("%s %s Loading  Please Wait ....." % (progName, ver))
 import time
 import cv2
@@ -54,7 +57,7 @@ configFilePath = baseDir + "search_config.py"
 if not os.path.exists(configFilePath):  # check if config.py file exist if not wget github copy
     print("ERROR - Could Not Find Configuration File %s" % (configFilePath))
     import urllib2
-    config_url = "https://raw.github.com/pageauc/rpi-speed-camera/master/search_config.py"
+    config_url = f"https://raw.github.com/{gitHubUser}/rpi-speed-camera/{gitHubBranch}/search_config.py"
     print("   Attempting to Download config File from %s" % ( config_url ))
     try:
         wgetfile = urllib2.urlopen(config_url)
@@ -220,7 +223,7 @@ def search_for_match(search_image, search_rect):
 if not os.path.isdir(search_dest_path):
     print("Creating Search Folder %s" % ( search_dest_path))
     os.makedirs(search_dest_path)
-    
+
 search_list = glob.glob(search_dest_path + '/*jpg')
 target_total = len(search_list)
 try:

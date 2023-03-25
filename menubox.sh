@@ -5,6 +5,9 @@ ver="11.08"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
+GIT_HUB_USER=${SPEED_CAMERA_GIT_HUB_USER:-pageauc}
+GIT_HUB_BRANCH=${SPEED_CAMERA_GIT_HUB_BRANCH:-master}
+
 progname="speed-cam.py"
 speedconfig="config.py"
 searchconfig="search_config.py"
@@ -323,7 +326,7 @@ function do_plugins_menu ()
 function do_nano_edit ()
 {
     menutitle="Select File to Edit"
-    startdir="/home/pi/speed-camera"
+    startdir="${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
     filext='sh'
 
     Filebrowser "$menutitle" "$startdir"
@@ -344,7 +347,7 @@ function do_nano_edit ()
 function do_sync_run ()
 {
     menutitle="Select rclone sync Script to Run"
-    startdir="/home/pi/speed-camera"
+    startdir="${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera"
     filext='sh'
 
     Filebrowser "$menutitle" "$startdir"
@@ -417,7 +420,7 @@ Rclone is the default speed-camera remote storage sync utility.
 You Must Configure a Remote Storage Service before using.
 
 For More Details See Wiki per link below
-https://github.com/pageauc/speed-camera/wiki
+https://github.com/${GIT_HUB_USER}/speed-camera/wiki
 
 Select RCLONE, EDIT menu to change rclone- bash script variables.
 ctrl-x y to save changes and exit nano otherwise respond n.
@@ -431,7 +434,7 @@ or manually Run an rclone- bash script from a console session.
     ./rclone-script-name.sh
 
 If you want to Run Rclone install separately for another project.
-See my GitHub Project https://github.com/pageauc/rclone4pi
+See my GitHub Project https://github.com/${GIT_HUB_USER}/rclone4pi
 
                            -----
 \
@@ -554,9 +557,9 @@ function do_report_menu ()
 {
   if [ ! -f ./sql_speed_gt.py ]; then
     echo "Downloading sql_speed_gt.py"
-    wget -O sql_speed_gt.py https://raw.github.com/pageauc/speed-camera/master/sql_speed_gt.py
-    chmod +x sql_speed_gt.py 
-    sudo apt-get install python-gnuplot    
+    wget -O sql_speed_gt.py https://raw.github.com/${GIT_HUB_USER}/speed-camera/${GIT_HUB_BRANCH}/sql_speed_gt.py
+    chmod +x sql_speed_gt.py
+    sudo apt-get install python-gnuplot
   fi
 
   SET_SEL=$( whiptail --title "sqlite3 Report Menu" \
@@ -598,12 +601,12 @@ function do_report_menu ()
             do_report_menu ;;
       c\ *) clear
             echo "graphing 5 day hourly plot for aver speeds >= 17"
-            ./sql-make-graph-speed-ave.py -s 17 -d 5 -t hour           
+            ./sql-make-graph-speed-ave.py -s 17 -d 5 -t hour
             do_anykey
             do_report_menu ;;
       d\ *) clear
             echo "graphing 5 day hourly counts plot for speeds >= 17"
-            ./sql-make-graph-count-totals.py -s 17 -d 5 -t hour           
+            ./sql-make-graph-count-totals.py -s 17 -d 5 -t hour
             do_anykey
             do_report_menu ;;
       e\ *) clear
@@ -641,7 +644,7 @@ function do_report_menu ()
                       ;;
                 esac
             esac
-            do_report_menu ;;            
+            do_report_menu ;;
       g\ *) do_report_about
             do_report_menu ;;
       q\ *) clear
@@ -658,7 +661,7 @@ function do_report_about()
        speed camera - SQL Reports Menu
 
 Reports uses the sqlite3 speed camera database located at
-   /home/pi/speed-cam/data/speed_cam.db
+   "${SPEED_CAMERA_DIR:-"/home/pi"}/speed-camera/data/speed_cam.db"
 
 The reports runs sql_speed_gt.py queries for displaying formatted
 reports.
@@ -668,9 +671,9 @@ Note: sql_speed_gt.py uses gnuplot and has been superceded by
 
        sql-make-graph-count-totals.py and
        sql-make-graph-speed-ave.py
-       
-    Run these with the -h parameter to view help.  
-       
+
+    Run these with the -h parameter to view help.
+
 
 \
 " 0 0 0
@@ -683,7 +686,7 @@ function do_upgrade()
                --yesno "Upgrade speed-cam Files from GitHub.\n Some config Files Will be Updated" 0 0 0 \
             s   --yes-button "upgrade" \
                --no-button "Cancel" ); then
-    curlcmd=('/usr/bin/curl -L https://raw.github.com/pageauc/rpi-speed-camera/master/speed-install.sh | bash')
+    curlcmd=('/usr/bin/curl -L https://raw.github.com/${GIT_HUB_USER}/rpi-speed-camera/${GIT_HUB_BRANCH}/speed-install.sh | bash')
     eval $curlcmd
     do_anykey
   fi
@@ -711,7 +714,7 @@ function do_about()
     on a network pc web browser by accessing rpi IP address and port.
     eg 192.168.1.100:8080 (replace ip with your rpi ip)
 
- For more see  https://github.com/pageauc/rpi-speed-camera
+ For more see  https://github.com/${GIT_HUB_USER}/rpi-speed-camera
 
  To Exit this About Press TAB key then Enter on OK
  Good Luck and Enjoy .... Claude
